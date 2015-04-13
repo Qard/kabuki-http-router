@@ -1,4 +1,6 @@
-require('babel/register')
+require('babel/register')({
+  blacklist: ['regenerator']
+})
 var gulp = require('gulp')
 var babel = require('gulp-babel')
 var mocha = require('gulp-mocha')
@@ -9,7 +11,9 @@ gulp.task('default', [
 
 gulp.task('build', function () {
   return gulp.src('lib/**/*.js')
-    .pipe(babel())
+    .pipe(babel({
+      blacklist: ['regenerator']
+    }))
     .pipe(gulp.dest('dist'))
 })
 
