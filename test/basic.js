@@ -1,3 +1,4 @@
+import session from 'express-session'
 import Promise from 'bluebird'
 import express from 'express'
 import router from '../'
@@ -54,7 +55,9 @@ describe('basic', () => {
       { get: 'query.user' },
       { get: 'query.pass' }
     ], {
-      resolver: (data) => (req, res, next) => next()
+      resolver: (run, req, res, next) => {
+        run().then(() => next(), next)
+      }
     }))
 
     app.get('/hello/:name', handle('hello', [
@@ -88,6 +91,34 @@ describe('basic', () => {
     })
   })
 
+  it('should support sessions', () => {
+    let api = (session) => {
+      let num = 1
+      return session.register('increment', () => (num++).toString())
+    }
+
+    let handle = router(api)
+
+    let app = express()
+    app.use(session({
+      cookie: { maxAge: 60000 },
+      saveUninitialized: true,
+      secret: 'keyboard cat',
+      resave: false
+    }))
+
+    app.get('/increment', handle('increment', []))
+
+    return makeServer(app, servers).then((port) => {
+      return get(`http://localhost:${port}/increment`).then((res) => {
+        res.body.should.equal('1')
+        return get(`http://localhost:${port}/increment`, res.cookie)
+      }).then((res) => {
+        res.body.should.equal('2')
+      })
+    })
+  })
+
 })
 
 let makeServer = (app, servers) => {
@@ -100,15 +131,21 @@ let makeServer = (app, servers) => {
   })
 }
 
-let get = (address) => {
-  let parsed = url.parse(address)
+let get = (address, cookie) => {
+  let parsed = typeof address === 'string' ? url.parse(address) : address
+  if (cookie) {
+    parsed.headers = parsed.headers || {}
+    parsed.headers.cookie = cookie
+  }
+
   return new Promise((resolve, reject) => {
-    let req = http.get(address, (res) => {
+    let req = http.get(parsed, (res) => {
       let chunks = []
       res.on('error', reject)
       res.on('data', (c) => chunks.push(c.toString()))
       res.on('end', () => {
         resolve({
+          cookie: res.headers['set-cookie'],
           status: res.statusCode,
           body: chunks.join('')
         })

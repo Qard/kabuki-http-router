@@ -20,12 +20,14 @@
     "bluebird": "~2.9.24",
     "defaults": "~1.0.2",
     "lru-cache": "~2.5.2",
+    "promise-route": "~1.0.0",
     "transform-arguments": "~1.0.0",
     "uuid": "~2.0.1"
   },
   "devDependencies": {
     "babel": "~5.0.12",
     "express": "~4.12.3",
+    "express-session": "~1.11.1",
     "gulp": "~3.8.11",
     "gulp-babel": "~5.1.0",
     "gulp-mocha": "~2.0.1",
