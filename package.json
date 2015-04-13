@@ -1,6 +1,6 @@
 {
   "name": "kabuki-http-router",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Route http requests through a kabuki service handler",
   "author": "Stephen Belanger <admin@stephenbelanger.com>",
   "main": "dist/index.js",
