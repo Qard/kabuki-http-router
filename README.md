@@ -1,5 +1,7 @@
 # kabuki-http-router
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Qard/kabuki-http-router.svg)](https://greenkeeper.io/)
+
 This is an experimental module to allow interacting with a
 [kabuki](http://npm.im/kabuki) service through HTTP. It has basic session
 support and works with any framework supported by
